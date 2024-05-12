@@ -20,7 +20,6 @@ public class StockDataController {
     @GetMapping("/{symbol}")
     public  ResponseEntity<StockData> getStockData(@PathVariable String symbol) {
         StockData stockData = stockDataService.getStockData(symbol);
-        System.out.println(stockData.getStockMetaData().getSymbol());
         if (stockData != null) {
             return ResponseEntity.ok(stockData);
         } else {
