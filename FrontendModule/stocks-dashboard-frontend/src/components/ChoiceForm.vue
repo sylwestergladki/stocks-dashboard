@@ -2,7 +2,7 @@
   <div>
     <h1>Symbol Form</h1>
     <form @submit.prevent="submitForm">
-      <label for="symbol">Symbol:</label><br>
+      <label for="symbol">Symbol: </label>
       <input type="text" id="symbol" v-model="symbol" required /><br /><br />
 
       <input type="submit" value="Submit" />
@@ -18,9 +18,28 @@ export default {
     };
   },
   methods: {
-    submitForm() {
-      // Do something with the symbol value, for example, log it
-      console.log('Symbol:', this.symbol);
+    async submitForm() {
+      
+      const url = `http://localhost:8081/stocks/${this.symbol}`;
+
+      try {
+        const response = await fetch(url, {
+          method: 'POST'
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok.');
+        }
+
+        // Handle success response
+        console.log('Response:', response);
+
+        // Reset the symbol input field
+        this.symbol = '';
+      } catch (error) {
+        // Handle error
+        console.error('Error:', error);
+      }
     }
   }
 };

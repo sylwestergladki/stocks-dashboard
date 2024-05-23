@@ -1,15 +1,18 @@
 <template>
   <h2>STOCKS DASHBOARD APPLICATION</h2>
   <ChoiceForm/>
+  <StockDataDisplay/>
 </template>
 
 <script>
-import ChoiceForm from './components/ChoiceForm.vue'
+import ChoiceForm from './components/ChoiceForm.vue';
+import StockDataDisplay from './components/StockDataDisplay.vue';
 
 export default {
   name: 'App',
   components: {
-    ChoiceForm
+    ChoiceForm,
+    StockDataDisplay
   }
 }
 </script>

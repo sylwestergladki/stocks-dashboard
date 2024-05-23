@@ -1,9 +1,10 @@
 package pl.sylwestergladki.stocksdashboard.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.sylwestergladki.stocksdashboard.model.StockData;
+import pl.sylwestergladki.stocksdashboard.service.DashboardService;
 import pl.sylwestergladki.stocksdashboard.service.StockDataService;
 
 @RestController
@@ -11,10 +12,12 @@ import pl.sylwestergladki.stocksdashboard.service.StockDataService;
 public class StockDataController {
 
     private final StockDataService stockDataService;
+    private final DashboardService dasboardService;
 
-    @Autowired
-    public StockDataController(StockDataService stockDataService) {
+    public StockDataController(StockDataService stockDataService, DashboardService dasboardService) {
         this.stockDataService = stockDataService;
+        this.dasboardService = dasboardService;
+
     }
 
     @GetMapping("/{symbol}")
@@ -26,6 +29,13 @@ public class StockDataController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PostMapping("/{symbol}")
+    public ResponseEntity<String> makeDashboard(@PathVariable String symbol) {
+        dasboardService.createStockDashboard(symbol);
+        return new ResponseEntity<>("Dashboard created successfully", HttpStatus.CREATED);
+    }
+
 
 
 }
