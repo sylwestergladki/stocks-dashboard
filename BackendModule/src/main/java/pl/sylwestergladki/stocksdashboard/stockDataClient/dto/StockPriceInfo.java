@@ -1,11 +1,13 @@
-package pl.sylwestergladki.stocksdashboard.model;
+package pl.sylwestergladki.stocksdashboard.stockDataClient.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Embeddable;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Embeddable
 public class StockPriceInfo {
     @JsonProperty(value = "1. open")
     private double open;

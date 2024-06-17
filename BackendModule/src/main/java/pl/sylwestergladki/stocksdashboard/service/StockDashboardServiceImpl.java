@@ -1,32 +1,35 @@
 package pl.sylwestergladki.stocksdashboard.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.sylwestergladki.stocksdashboard.model.StockDashboard;
-import pl.sylwestergladki.stocksdashboard.model.StockData;
 import pl.sylwestergladki.stocksdashboard.repository.StockDashboardRepository;
 import pl.sylwestergladki.stocksdashboard.stockDataClient.StockDataClient;
+import pl.sylwestergladki.stocksdashboard.stockDataClient.dto.StockData;
+
 
 import java.util.List;
 
 
 @Service
-public class DashboardService {
+public class StockDashboardServiceImpl implements StockDashboardService {
 
     StockDashboard stockDashboard;
     StockDashboardRepository stockDashboardRepository;
     StockDataClient stockDataClient;
 
-    DashboardService(StockDashboard stockDashboard, StockDashboardRepository stockDashboardRepository,
-    StockDataClient stockDataClient){
+    StockDashboardServiceImpl(StockDashboard stockDashboard, StockDashboardRepository stockDashboardRepository,
+                              StockDataClient stockDataClient){
         this.stockDashboard = stockDashboard;
         this.stockDashboardRepository = stockDashboardRepository;
         this.stockDataClient = stockDataClient;
     }
 
     public void createStockDashboard(String symbol){
-        System.out.println("Create dashboard with symbol: " + symbol);
-        stockDashboardRepository.save(new StockDashboard(symbol));
+        StockData stockData = stockDataClient.getStockData(symbol);
+        StockDashboard dashboard = new StockDashboard();
+        dashboard.setSymbol(symbol);
+        dashboard.setStockPriceInfo(stockData.getStockPriceInfo());
+        stockDashboardRepository.save(dashboard);
     }
 
     public void deleteStockDashboard(Long id) {
@@ -38,8 +41,4 @@ public class DashboardService {
         return stockDashboardRepository.findAll();
     }
 
-    public StockData getDashboardData(Long id) {
-        StockDashboard dashboard = stockDashboardRepository.getById(id);
-        return stockDataClient.getStockData(dashboard.getSymbol());
-    }
 }

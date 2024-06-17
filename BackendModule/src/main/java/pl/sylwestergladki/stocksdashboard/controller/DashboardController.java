@@ -5,23 +5,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import pl.sylwestergladki.stocksdashboard.model.StockDashboard;
-import pl.sylwestergladki.stocksdashboard.model.StockData;
-import pl.sylwestergladki.stocksdashboard.service.DashboardService;
+import pl.sylwestergladki.stocksdashboard.service.StockDashboardServiceImpl;
+
 
 import java.util.List;
 
 @Controller
-@RequestMapping("/dashboards")
+@RequestMapping("/api/dashboards")
 public class DashboardController {
 
-    private final DashboardService dashboardService;
+    private final StockDashboardServiceImpl dashboardService;
 
-    public DashboardController(DashboardService dasboardService) {
+    public DashboardController(StockDashboardServiceImpl dasboardService) {
         this.dashboardService = dasboardService;
     }
 
     @PostMapping("/{symbol}")
-    public ResponseEntity<String> makeDashboard(@PathVariable String symbol) {
+    public ResponseEntity<String> createDashboard(@PathVariable String symbol) {
         dashboardService.createStockDashboard(symbol);
         return new ResponseEntity<>("Dashboard created successfully", HttpStatus.CREATED);
     }
@@ -33,14 +33,12 @@ public class DashboardController {
     }
 
     @GetMapping
-    public ResponseEntity<List<StockDashboard>> getAllStockDashboards() {
+    public ResponseEntity<List<StockDashboard>> getAllDashboards() {
         return ResponseEntity.ok(dashboardService.getAllDashboards());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<StockData> getStockData(@PathVariable Long id){
-        return ResponseEntity.ok(dashboardService.getDashboardData(id));
-    }
+
+
 
 
 

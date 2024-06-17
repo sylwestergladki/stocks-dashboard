@@ -1,4 +1,4 @@
-package pl.sylwestergladki.stocksdashboard.model;
+package pl.sylwestergladki.stocksdashboard.stockDataClient.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
