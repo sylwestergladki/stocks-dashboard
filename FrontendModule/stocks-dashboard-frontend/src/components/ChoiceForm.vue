@@ -20,7 +20,7 @@ export default {
   methods: {
     async submitForm() {
       
-      const url = `http://localhost:8081/dashboards/${this.symbol}`;
+      const url = `http://localhost:8081/api/dashboards/${this.symbol}`;
 
       try {
         const response = await fetch(url, {
