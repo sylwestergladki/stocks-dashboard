@@ -4,22 +4,31 @@
     <ul>
       <div v-for="dashboard in dashboards" :key="dashboard.id">
         <CanvasJSStockChart :options="dashboard.options" :styles="{ width: '500px', height: '400px', margin: 'auto'}"/>
-        <button @click="deleteDashboard(dashboard.id)">Delete Dashboard</button>
+        <button @click="showDeleteDialog(dashboard.id)">Delete Dashboard</button>
       </div>
     </ul>
+    <ConfirmationDialog
+      :visible="isDialogVisible"
+      message="Do you really want to delete this dashboard?"
+      @confirm="deleteConfirmed"
+      @cancel="closeDialog"
+    />
   </div>
 </template>
 
 <script>
 import axios from 'axios';
 import { CanvasJSStockChart } from '@canvasjs/vue-stockcharts';
+import ConfirmationDialog from './ConfirmationDialog.vue'
 
 export default {
   components: {
-    CanvasJSStockChart
+    CanvasJSStockChart,
+    ConfirmationDialog
   },
   data() {
     return {
+      isDialogVisible: false,
       dashboards: []
     };
   },
@@ -74,14 +83,23 @@ export default {
       }
     };
   },
-  deleteDashboard(id) {
-      axios.delete(`http://localhost:8081/api/dashboards/${id}`)
-        .then(() => {
-          this.dashboards = this.dashboards.filter(dashboard => dashboard.id !== id);
-        })
-        .catch(error => {
-          console.error('Error deleting dashboard:', error);
-        });
+  showDeleteDialog(id) {
+      this.dashboardToDelete = id;
+      this.isDialogVisible = true;
+    },
+    closeDialog() {
+      this.isDialogVisible = false;
+      this.dashboardToDelete = null;
+    },
+    async deleteConfirmed() {
+      try {
+        await axios.delete(`http://localhost:8081/api/dashboards/${this.dashboardToDelete}`);
+        this.dashboards = this.dashboards.filter(dashboard => dashboard.id !== this.dashboardToDelete);
+      } catch (error) {
+        console.error('Error deleting dashboard:', error);
+      } finally {
+        this.closeDialog();
+      }
     }
 }
 

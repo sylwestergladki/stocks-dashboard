@@ -5,7 +5,7 @@
       <label for="symbol">Symbol: </label>
       <input type="text" id="symbol" v-model="symbol" required /><br /><br />
 
-      <input type="submit" value="Submit" />
+      <input type="submit" value="Submit" @submit.prevent="onSubmit"/>
     </form>
   </div>
 </template>
@@ -31,11 +31,9 @@ export default {
           throw new Error('Network response was not ok.');
         }
 
-        // Handle success response
-        console.log('Response:', response);
-
         // Reset the symbol input field
         this.symbol = '';
+        window.location.reload();
       } catch (error) {
         // Handle error
         console.error('Error:', error);
