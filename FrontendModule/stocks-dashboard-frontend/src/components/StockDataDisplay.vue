@@ -1,19 +1,19 @@
 <template>
-  <div>
+  <div class="dashboards-container">
     <h1>Dashboards</h1>
-    <ul>
-      <div v-for="dashboard in dashboards" :key="dashboard.id">
+    <ul class="dashboard-list">
+      <div v-for="dashboard in dashboards" :key="dashboard.id" class="dashboard-item">
         <CanvasJSStockChart :options="dashboard.options" :styles="{ width: '500px', height: '400px', margin: 'auto'}"/>
-        <button @click="showDeleteDialog(dashboard.id)">Delete Dashboard</button>
+        <button class="delete-dashboard-button" @click="showDeleteDialog(dashboard.id)">Delete Dashboard</button>
       </div>
     </ul>
-    <ConfirmationDialog
+  </div>
+  <ConfirmationDialog
       :visible="isDialogVisible"
       message="Do you really want to delete this dashboard?"
       @confirm="deleteConfirmed"
       @cancel="closeDialog"
     />
-  </div>
 </template>
 
 <script>
@@ -105,3 +105,47 @@ export default {
 
 };
 </script>
+
+<style>
+
+.dashboards-container{
+  background-color: rgb(76, 131, 122);
+  padding: 1.5rem; 
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 2rem;
+  color: white;
+}
+
+.dashboard-list{
+  display: flex;
+  flex-wrap: wrap;
+  list-style-type: none;
+  padding: 0;
+}
+
+.dashboard-item {
+  flex: 1 0 300px;
+  margin: 10px;
+  background-color: #f0f0f0; 
+  padding: 1rem;
+  border-radius: 1rem;
+  max-width: 35rem;
+}
+
+.delete-dashboard-button{
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete-dashboard-button:hover {
+  background-color: #d32f2f; 
+}
+
+</style>
