@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboards-container">
+  <div v-if="dashboards.length > 0" class="dashboards-container">
     <h1>Dashboards</h1>
     <ul class="dashboard-list">
       <div v-for="dashboard in dashboards" :key="dashboard.id" class="dashboard-item">
@@ -60,7 +60,7 @@ export default {
 
   const dataPoints = sortedData.map(item => ({
     x: item.date,
-    y: item.prices["1. open"] // Use "1. open" price for line chart
+    y: item.prices["c"] // Use "1. open" price for line chart
   }));
 
     console.log(stockPriceInfo)

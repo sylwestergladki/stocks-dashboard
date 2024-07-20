@@ -1,22 +1,35 @@
 <template>
   <div class="choice-form">
     <h2>Choose your symbol</h2>
-      <div class="symbol-container">
-        <input type="text" v-model="searchQuery" @input="searchStocks" @focus="showSuggestions = true"
-          @blur="hideSuggestions" placeholder="Enter stock symbol" autocomplete="off" class="symbol-input" />
-        <ul v-if="showSuggestions && results.length" class="suggestions">
+      <div class="form-container"> 
+        <input type="text" v-model="searchQuery" placeholder="Enter stock symbol" autocomplete="off" class="symbol-input"/>
+        <ul v-if="showSuggestions && results.length && symbol != null" class="suggestions">
           <li v-for="result in results" :key="result.symbol" @mousedown.prevent="selectSuggestion(result)">
             <div>{{ result.symbol }}</div>
             <div>{{ result.name }}</div>
           </li>
         </ul>
-        <p v-else-if="searchQuery">No results found or your symbol is too small</p>
+        <p v-else-if="searchQuery && symbol == null">No results found or your symbol is too small</p>
+        <button @click="findTicker" class="find-button">Find</button>
+        <p>Interval:</p>
+        <select v-model="interval" class="interval-input">
+          <option disabled value="">Select interval</option>
+          <option value="day">Daily</option>
+          <option value="month">Monthly</option>
+          <option value="year">Yearly</option>
+        </select>
+        <p>Date from:</p>
+        <input type="date" v-model="dateFrom" placeholder="Date from" class="date-input" />
+        <p>Date to:</p>
+        <input type="date" v-model="dateTo" placeholder="Date to" class="date-input" />
+        
+        <button @click="submitForm"  class="submit-button">Submit</button>
       </div>
   </div>
 </template>
 
 <script>
-import debounce from 'lodash/debounce';
+
 
 export default {
   data() {
@@ -24,69 +37,51 @@ export default {
       symbol: '',
       searchQuery: '',
       results: [],
-      showSuggestion: false
+      showSuggestions: false,
+      interval: '',
+      dateFrom: '',
+      dateTo: ''
     };
   },
   methods: {
     async submitForm() {
+      const url = `http://localhost:8081/api/dashboards/create-dashboard?symbol=${this.symbol}&interval=${this.interval}&dateFrom=${this.dateFrom}&dateTo=${this.dateTo}`;
 
-      const url = `http://localhost:8081/api/dashboards/${this.symbol}`;
-
+      
       try {
         const response = await fetch(url, {
           method: 'POST'
         });
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok.');
-        }
-
-        this.symbol = '';
-        window.location.reload();
+        const responseData = await response.json();
+        console.log('Dashboard creation successful:', responseData);
+        location.reload();
+        // Handle success response if needed
       } catch (error) {
-        console.error('Error:', error);
+        console.error('Error creating dashboard:', error);
+        // Handle error response
+        alert(`Error creating dashboard: ${error.message}`);
       }
     },
-    searchStocks: debounce(async function () {
-      if (this.searchQuery.trim() === ''|| this.searchQuery.length <= 2) {
-        this.results = [];
-        return;
-      }
-
+    async findTicker() {
       try {
-        const response = await fetch(`http://localhost:8081/api/dashboards/search/${this.searchQuery}`);
+        this.showSuggestions = true;
+        const response = await fetch(`http://localhost:8081/api/symbols/search/${this.searchQuery}`);
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const data = await response.json();
-        this.results = data[0].bestMatches.map(match => ({
-          symbol: match['1. symbol'],
-          name: match['2. name']
+        this.results = data.results.map(match => ({
+          symbol: match['ticker'],
+          name: match['name']
         }));
       } catch (error) {
         console.error("Error fetching search results:", error);
         this.results = [];
       }
-    }, 300)
-
-    ,
-    async selectSuggestion(result) {
-      this.searchQuery = result.symbol;
+    },
+    
+    selectSuggestion(result) {
       this.showSuggestions = false;
-      const url = `http://localhost:8081/api/dashboards/${result.symbol}`;
-
-      try {
-        const response = await fetch(url, {
-          method: 'POST'
-        });
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok.');
-        }
-
-        this.symbol = '';
-        window.location.reload();
-      } catch (error) {
-        console.error('Error:', error);
-      }
+      this.symbol = result.symbol;
+      this.searchQuery = result.symbol;
     },
     hideSuggestions() {
       setTimeout(() => {
@@ -101,6 +96,35 @@ export default {
 
 
 <style>
+.submit-button{
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin-top: 1rem;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.submit-button:active {
+  background-color: #004494;
+  transform: translateY(0);
+}
+
+
+input{
+  margin-top: 1%;
+}
+
+
 .choice-form {
   background-color: rgb(76, 131, 122); 
   padding: 1.5rem;
@@ -116,8 +140,9 @@ export default {
   margin-bottom: 1rem;
 }
 
-.choice-form input[type="text"],
-.choice-form button {
+.choice-form input,
+.choice-form button,
+.interval-input {
   width: 100%;
   padding: 0.8rem 1rem;
   font-size: 1rem; 
@@ -126,16 +151,6 @@ export default {
   box-sizing: border-box; 
 }
 
-.choice-form button {
-  background-color: #4c837a;
-  color: #fff;
-  cursor: pointer; 
-  transition: background-color 0.3s ease; 
-}
-
-.choice-form button:hover {
-  background-color: #368580;
-}
 
 .suggestions {
   list-style-type: none;
@@ -172,10 +187,34 @@ body {
     display: flex;
     justify-content: space-between; 
     border-bottom: 1px solid #f0f0f0; 
-  }
+  } 
 
-.symbol-container p{
+.form-container p{
   color: white;
+  font-size: 20px;
+}
+
+.find-button{
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin-top: 1rem;
+}
+
+.find-button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.find-button:active {
+  background-color: #004494;
+  transform: translateY(0);
 }
 
 </style>
