@@ -10,11 +10,10 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.time.Duration;
+
 
 @Configuration
 @EnableWebMvc
-@ComponentScan("pl.sylwestergladki.stocksdashboard")
 public class StocksDashboardConfiguration implements WebMvcConfigurer{
 
     @Autowired
@@ -22,9 +21,7 @@ public class StocksDashboardConfiguration implements WebMvcConfigurer{
 
     @Bean
     public RestTemplate restTemplate() {
-        return builder
-                .setConnectTimeout(Duration.ofSeconds(10))
-                .build();
+        return builder.build();
     }
 
     @Override

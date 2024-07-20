@@ -4,8 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
-import pl.sylwestergladki.stocksdashboard.stockDataClient.dto.StockPriceInfo;
+import pl.sylwestergladki.stocksdashboard.stockDataClient.dto.ResultDto;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 
@@ -22,6 +23,6 @@ public class StockDashboard {
     @ElementCollection
     @CollectionTable(name = "stock_price_info", joinColumns = @JoinColumn(name = "data_id"))
     @MapKeyColumn(name = "date")
-    private Map<String, StockPriceInfo> stockPriceInfo;
+    private Map<LocalDate, ResultDto> stockPriceInfo;
 
 }
