@@ -60,7 +60,7 @@ export default {
 
   const dataPoints = sortedData.map(item => ({
     x: item.date,
-    y: item.prices["c"] // Use "1. open" price for line chart
+    y: item.prices["c"]
   }));
 
     console.log(stockPriceInfo)
@@ -71,7 +71,7 @@ export default {
       },
       charts: [{
         data: [{
-          type: "line", // In the future i can use "candlestick"
+          type: "line",
           dataPoints: dataPoints
         }]
       }],

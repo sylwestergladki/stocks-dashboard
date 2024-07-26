@@ -23,7 +23,7 @@
         <p>Date to:</p>
         <input type="date" v-model="dateTo" placeholder="Date to" class="date-input" />
         
-        <button @click="submitForm"  class="submit-button">Submit</button>
+        <button @click="submitForm" class="submit-button">Submit</button>
       </div>
   </div>
 </template>
@@ -45,21 +45,20 @@ export default {
   },
   methods: {
     async submitForm() {
-      const url = `http://localhost:8081/api/dashboards/create-dashboard?symbol=${this.symbol}&interval=${this.interval}&dateFrom=${this.dateFrom}&dateTo=${this.dateTo}`;
 
-      
+      if(this.symbol == '' || this.interval == '' || this.dateFrom == '' || this.dateTo){
+        alert('One or more parameters in form are empty!')
+      }
+
+      const url = `http://localhost:8081/api/dashboards/create-dashboard?symbol=${this.symbol}
+      &interval=${this.interval}&dateFrom=${this.dateFrom}&dateTo=${this.dateTo}`;
       try {
-        const response = await fetch(url, {
-          method: 'POST'
-        });
-        const responseData = await response.json();
-        console.log('Dashboard creation successful:', responseData);
+        const response = await fetch(url, { method: 'POST'});
+        console.log(response);
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         location.reload();
-        // Handle success response if needed
       } catch (error) {
-        console.error('Error creating dashboard:', error);
-        // Handle error response
-        alert(`Error creating dashboard: ${error.message}`);
+        console.error('Error creating dashboard', error);
       }
     },
     async findTicker() {
@@ -109,7 +108,7 @@ export default {
   margin-top: 1rem;
 }
 
-.submit-button:hover {
+.submit-button:hover {  
   background-color: #0056b3;
   transform: translateY(-2px);
 }
