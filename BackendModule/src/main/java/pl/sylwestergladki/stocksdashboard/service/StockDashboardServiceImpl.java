@@ -2,6 +2,7 @@ package pl.sylwestergladki.stocksdashboard.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import pl.sylwestergladki.stocksdashboard.helpers.DateHelper;
 import pl.sylwestergladki.stocksdashboard.model.StockDashboard;
 import pl.sylwestergladki.stocksdashboard.model.StockInterval;
 import pl.sylwestergladki.stocksdashboard.repository.StockDashboardRepository;
@@ -10,9 +11,7 @@ import pl.sylwestergladki.stocksdashboard.stockDataClient.dto.ResultDto;
 import pl.sylwestergladki.stocksdashboard.stockDataClient.dto.StockDto;
 
 
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.*;
 
 
@@ -43,7 +42,8 @@ public class StockDashboardServiceImpl implements StockDashboardService {
 
             Map<LocalDate, ResultDto> stockPriceInfo = new HashMap<>();
             for (int i = 0; i < stockData.get().getResultsCount() -1; i++) {
-                stockPriceInfo.put(convertTimestampToLocalDate(stockData.get().getResults().get(i).getT()), stockData.get().getResults().get(i));
+                stockPriceInfo.put(DateHelper.convertTimestampToLocalDate(stockData.get().getResults().get(i).getT()),
+                        stockData.get().getResults().get(i));
             }
 
             dashboard.setStockPriceInfo(stockPriceInfo);
@@ -59,14 +59,6 @@ public class StockDashboardServiceImpl implements StockDashboardService {
 
     public List<StockDashboard> getAllDashboards() {
         return stockDashboardRepository.findAll();
-    }
-
-    public static LocalDate convertTimestampToLocalDate(long timestamp) {
-        // Convert the timestamp (in milliseconds) to an Instant
-        Instant instant = Instant.ofEpochMilli(timestamp);
-
-        // Convert the Instant to LocalDate in the system's default time zone
-        return instant.atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
 }

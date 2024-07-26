@@ -10,8 +10,7 @@ import pl.sylwestergladki.stocksdashboard.model.StockDashboard;
 import pl.sylwestergladki.stocksdashboard.model.StockInterval;
 import pl.sylwestergladki.stocksdashboard.service.StockDashboardServiceImpl;
 
-
-import java.time.LocalDate;
+    import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 

@@ -36,7 +36,7 @@ public class StockDataClient {
                 apiKey;
 
 
-         return Optional.of( restTemplate.getForObject(apiUrl, StockDto.class));
+         return Optional.ofNullable(restTemplate.getForObject(apiUrl, StockDto.class));
     }
 
 
