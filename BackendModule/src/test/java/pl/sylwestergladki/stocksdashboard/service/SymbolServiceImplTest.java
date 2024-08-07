@@ -22,7 +22,7 @@ class SymbolServiceImplTest {
 
     @Test
     public void symbolService_getSymbolMatch_correctSymbol_ReturnsSymbolInfo(){
-        String symbol = "AAPL";
+        String symbol = "AaPL";
 
         when(stockDataClient.getSymbolInfo(anyString())).thenReturn(TickerResponse.builder().build());
         TickerResponse symbolMatch = symbolService.getSymbolMatch(symbol);

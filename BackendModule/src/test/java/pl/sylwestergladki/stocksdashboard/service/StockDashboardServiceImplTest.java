@@ -73,6 +73,22 @@ class StockDashboardServiceImplTest {
     }
 
     @Test
+    public void stockDashboardService_createStockDashboard_dateToIsBeforeDateFrom_ThrowsException() {
+        LocalDate dateTo = LocalDate.of(2023, 1,1);
+        LocalDate dateFrom = LocalDate.of(2023, 2,1);
+        
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            stockDashboardService.createStockDashboard(SYMBOL, INTERVAL, dateFrom, dateTo);
+        });
+
+        Assertions.assertThat("DateTo is before dateFrom").isEqualTo(exception.getMessage());
+
+        verify(stockDataClient, times(0)).getStockData(SYMBOL, INTERVAL, dateFrom, dateTo);
+        verify(stockDashboardRepository, times(0)).save(any(StockDashboard.class));
+    }
+
+
+    @Test
     void stockDashboardService_deleteStockDashboard_() {
         StockDashboard dashboard = StockDashboard.builder().id(DASHBOARD_ID).build();
 
