@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public class SymbolServiceImpl implements SymbolService {
 
     private StockDataClient stockDataClient;
-    private static final Pattern SYMBOL_PATTERN = Pattern.compile("^[A-Z]+$");
+    private static final Pattern SYMBOL_PATTERN = Pattern.compile("[A-Za-z]+", Pattern.CASE_INSENSITIVE);
 
     SymbolServiceImpl(StockDataClient stockDataClient){
         this.stockDataClient = stockDataClient;

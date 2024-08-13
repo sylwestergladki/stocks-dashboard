@@ -30,6 +30,9 @@ public class StockDashboardServiceImpl implements StockDashboardService {
     }
 
         public StockDashboard createStockDashboard(String symbol, StockInterval interval, LocalDate dateFrom, LocalDate dateTo){
+            if(dateTo.isBefore(dateFrom)){
+                throw new IllegalArgumentException("DateTo is before dateFrom");
+            }
 
             Optional<StockDto> stockData = stockDataClient.getStockData(symbol, interval, dateFrom, dateTo);
             if(stockData.isEmpty()){
