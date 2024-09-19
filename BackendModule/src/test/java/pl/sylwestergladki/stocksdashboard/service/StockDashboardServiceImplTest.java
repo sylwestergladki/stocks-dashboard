@@ -8,7 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.sylwestergladki.stocksdashboard.model.StockDashboard;
-import pl.sylwestergladki.stocksdashboard.model.StockInterval;
 import pl.sylwestergladki.stocksdashboard.repository.StockDashboardRepository;
 import pl.sylwestergladki.stocksdashboard.stockDataClient.StockDataClient;
 import pl.sylwestergladki.stocksdashboard.stockDataClient.dto.StockDto;
@@ -34,7 +33,6 @@ class StockDashboardServiceImplTest {
     private StockDashboardServiceImpl stockDashboardService;
 
     private final String SYMBOL = "AAPL";
-    private final StockInterval INTERVAL = StockInterval.DAY;
     private final LocalDate DATE_FROM = LocalDate.of(2023, 1, 1);
     private final LocalDate DATE_TO = LocalDate.of(2023, 1, 10);
     private final Long DASHBOARD_ID = 1L;
@@ -45,30 +43,30 @@ class StockDashboardServiceImplTest {
         StockDto stockDto = StockDto.builder().build();
         Optional<StockDto> optionalStockDto = Optional.of(stockDto);
 
-        when(stockDataClient.getStockData(SYMBOL, INTERVAL, DATE_FROM, DATE_TO)).thenReturn(optionalStockDto);
+        when(stockDataClient.getStockData(SYMBOL, DATE_FROM, DATE_TO)).thenReturn(optionalStockDto);
         when(stockDashboardRepository.save(any(StockDashboard.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        StockDashboard dashboard = stockDashboardService.createStockDashboard(SYMBOL, INTERVAL, DATE_FROM, DATE_TO);
+        StockDashboard dashboard = stockDashboardService.createStockDashboard(SYMBOL, DATE_FROM, DATE_TO);
 
         Assertions.assertThat(dashboard).isNotNull();
         Assertions.assertThat(dashboard.getSymbol()).isEqualTo(SYMBOL);
 
-        verify(stockDataClient, times(1)).getStockData(SYMBOL, INTERVAL, DATE_FROM, DATE_TO);
+        verify(stockDataClient, times(1)).getStockData(SYMBOL, DATE_FROM, DATE_TO);
         verify(stockDashboardRepository, times(1)).save(any(StockDashboard.class));
     }
 
     @Test
     public void stockDashboardService_createStockDashboard_stockDToIsEmpty_ThrowsException() {
 
-        when(stockDataClient.getStockData(SYMBOL, INTERVAL, DATE_FROM, DATE_TO)).thenReturn(Optional.empty());
+        when(stockDataClient.getStockData(SYMBOL, DATE_FROM, DATE_TO)).thenReturn(Optional.empty());
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            stockDashboardService.createStockDashboard(SYMBOL, INTERVAL, DATE_FROM, DATE_TO);
+            stockDashboardService.createStockDashboard(SYMBOL, DATE_FROM, DATE_TO);
         });
 
         Assertions.assertThat("There is no valor with this symbol: " + SYMBOL).isEqualTo(exception.getMessage());
 
-        verify(stockDataClient, times(1)).getStockData(SYMBOL, INTERVAL, DATE_FROM, DATE_TO);
+        verify(stockDataClient, times(1)).getStockData(SYMBOL, DATE_FROM, DATE_TO);
         verify(stockDashboardRepository, times(0)).save(any(StockDashboard.class));
     }
 
@@ -78,12 +76,12 @@ class StockDashboardServiceImplTest {
         LocalDate dateFrom = LocalDate.of(2023, 2,1);
         
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            stockDashboardService.createStockDashboard(SYMBOL, INTERVAL, dateFrom, dateTo);
+            stockDashboardService.createStockDashboard(SYMBOL, dateFrom, dateTo);
         });
 
         Assertions.assertThat("DateTo is before dateFrom").isEqualTo(exception.getMessage());
 
-        verify(stockDataClient, times(0)).getStockData(SYMBOL, INTERVAL, dateFrom, dateTo);
+        verify(stockDataClient, times(0)).getStockData(SYMBOL, dateFrom, dateTo);
         verify(stockDashboardRepository, times(0)).save(any(StockDashboard.class));
     }
 
@@ -102,10 +100,8 @@ class StockDashboardServiceImplTest {
 
     @Test
     void stockDashboardService_DeleteStockDashboard_NotFoundStockDasboard_ThrowsException() {
-        // Mock the behavior of the repository
         when(stockDashboardRepository.findById(DASHBOARD_ID)).thenReturn(Optional.empty());
 
-        // Verify that the exception is thrown
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
             stockDashboardService.deleteStockDashboard(DASHBOARD_ID);
         });

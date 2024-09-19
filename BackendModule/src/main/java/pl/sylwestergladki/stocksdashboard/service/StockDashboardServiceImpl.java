@@ -4,7 +4,6 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import pl.sylwestergladki.stocksdashboard.helpers.DateHelper;
 import pl.sylwestergladki.stocksdashboard.model.StockDashboard;
-import pl.sylwestergladki.stocksdashboard.model.StockInterval;
 import pl.sylwestergladki.stocksdashboard.repository.StockDashboardRepository;
 import pl.sylwestergladki.stocksdashboard.stockDataClient.StockDataClient;
 import pl.sylwestergladki.stocksdashboard.stockDataClient.dto.ResultDto;
@@ -29,12 +28,12 @@ public class StockDashboardServiceImpl implements StockDashboardService {
         this.stockDataClient = stockDataClient;
     }
 
-        public StockDashboard createStockDashboard(String symbol, StockInterval interval, LocalDate dateFrom, LocalDate dateTo){
+        public StockDashboard createStockDashboard(String symbol, LocalDate dateFrom, LocalDate dateTo){
             if(dateTo.isBefore(dateFrom)){
                 throw new IllegalArgumentException("DateTo is before dateFrom");
             }
 
-            Optional<StockDto> stockData = stockDataClient.getStockData(symbol, interval, dateFrom, dateTo);
+            Optional<StockDto> stockData = stockDataClient.getStockData(symbol, dateFrom, dateTo);
             if(stockData.isEmpty()){
                 throw new IllegalArgumentException("There is no valor with this symbol: " + symbol);
             }

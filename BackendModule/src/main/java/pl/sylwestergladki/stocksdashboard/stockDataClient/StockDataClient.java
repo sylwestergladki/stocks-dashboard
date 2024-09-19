@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import pl.sylwestergladki.stocksdashboard.model.StockInterval;
 import pl.sylwestergladki.stocksdashboard.stockDataClient.dto.TickerResponse;
 import pl.sylwestergladki.stocksdashboard.stockDataClient.dto.StockDto;
 
@@ -16,7 +15,7 @@ import java.util.Optional;
 public class StockDataClient {
 
     private final RestTemplate restTemplate;
-    @Value("${api.key}")
+    @Value("${API-KEY}")
     String apiKey;
 
 
@@ -24,12 +23,11 @@ public class StockDataClient {
         this.restTemplate = restTemplate;
     }
 
-    public Optional<StockDto> getStockData(String symbol, StockInterval interval, LocalDate dateFrom, LocalDate dateTo) {
+    public Optional<StockDto> getStockData(String symbol, LocalDate dateFrom, LocalDate dateTo) {
 
         String apiUrl = "https://api.polygon.io/v2/aggs/ticker/" +
                 symbol +
-                "/range/1/" +
-                interval.getValue() +
+                "/range/1/day" +
                 "/" + dateFrom +
                 "/" + dateTo + "/" +
                 "?adjusted=true&sort=asc&apiKey=" +

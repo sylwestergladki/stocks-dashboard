@@ -3,7 +3,7 @@
     <h1>Dashboards</h1>
     <ul class="dashboard-list">
       <div v-for="dashboard in dashboards" :key="dashboard.id" class="dashboard-item">
-        <CanvasJSStockChart :options="dashboard.options" :styles="{ width: '500px', height: '400px', margin: 'auto'}"/>
+        <CanvasJSStockChart :options="dashboard.options" :styles="{ width: '700px', height: '400px', margin: 'auto'}"/>
         <button class="delete-dashboard-button" @click="showDeleteDialog(dashboard.id)">Delete Dashboard</button>
       </div>
     </ul>
@@ -42,6 +42,9 @@ export default {
       this.dashboards = response.data;
       this.dashboards.forEach(dashboard => {
         dashboard.options = this.generateChartOptions(dashboard.symbol,dashboard.stockPriceInfo);
+        dashboard.options.animationEnabled = true;
+        dashboard.options.exportEnabled = true;
+        
       });
     } catch (error) {
       console.error('Error fetching dashboards:', error);
@@ -130,7 +133,7 @@ export default {
   background-color: #f0f0f0; 
   padding: 1rem;
   border-radius: 1rem;
-  max-width: 35rem;
+  max-width: 45rem;
 }
 
 .delete-dashboard-button{

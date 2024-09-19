@@ -1,5 +1,5 @@
 <template>
-  <h2>STOCKS DASHBOARD APPLICATION</h2>
+  <h2>STOCK DASHBOARD APPLICATION</h2>
   <ChoiceForm/>
   <StockDataDisplay/>
 </template>

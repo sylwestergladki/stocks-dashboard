@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import pl.sylwestergladki.stocksdashboard.model.StockDashboard;
-import pl.sylwestergladki.stocksdashboard.model.StockInterval;
 import pl.sylwestergladki.stocksdashboard.service.StockDashboardServiceImpl;
 
     import java.time.LocalDate;
@@ -29,18 +28,10 @@ public class DashboardController {
 
     @PostMapping("/create-dashboard")
     public ResponseEntity<String> createDashboard(@RequestParam String symbol,
-                                                  @RequestParam String interval,
                                                   @RequestParam String dateFrom,
                                                   @RequestParam String dateTo) {
-        logger.info("Received request to create dashboard with symbol: {}, interval: {}, dateFrom: {}, dateTo: {}",
-                symbol, interval, dateFrom, dateTo);
-
-        StockInterval stockInterval;
-        try {
-            stockInterval = StockInterval.valueOf(interval.trim().toUpperCase());
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>("Invalid interval: " + interval, HttpStatus.BAD_REQUEST);
-        }
+        logger.info("Received request to create dashboard with symbol: {}, dateFrom: {}, dateTo: {}",
+                symbol, dateFrom, dateTo);
 
         LocalDate fromDate;
         LocalDate toDate;
@@ -51,7 +42,7 @@ public class DashboardController {
             return new ResponseEntity<>("Invalid date format. Use 'yyyy-MM-dd'", HttpStatus.BAD_REQUEST);
         }
         try {
-            stockdashboardService.createStockDashboard(symbol, stockInterval, fromDate, toDate);
+            stockdashboardService.createStockDashboard(symbol, fromDate, toDate);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

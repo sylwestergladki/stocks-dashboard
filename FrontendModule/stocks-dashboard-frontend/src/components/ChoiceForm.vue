@@ -11,13 +11,6 @@
         </ul>
         <p v-else-if="searchQuery && symbol == null">No results found or your symbol is too small</p>
         <button @click="findTicker" class="find-button">Find</button>
-        <p>Interval:</p>
-        <select v-model="interval" class="interval-input">
-          <option disabled value="">Select interval</option>
-          <option value="day">Daily</option>
-          <option value="month">Monthly</option>
-          <option value="year">Yearly</option>
-        </select>
         <p>Date from:</p>
         <input type="date" v-model="dateFrom" placeholder="Date from" class="date-input" />
         <p>Date to:</p>
@@ -38,7 +31,6 @@ export default {
       searchQuery: '',
       results: [],
       showSuggestions: false,
-      interval: '',
       dateFrom: '',
       dateTo: ''
     };
@@ -46,12 +38,12 @@ export default {
   methods: {
     async submitForm() {
 
-      if(this.symbol == '' || this.interval == '' || this.dateFrom == '' || this.dateTo){
+      if(this.symbol == ''  || this.dateFrom == '' || this.dateTo == ''){
         alert('One or more parameters in form are empty!')
       }
 
       const url = `http://localhost:8081/api/dashboards/create-dashboard?symbol=${this.symbol}
-      &interval=${this.interval}&dateFrom=${this.dateFrom}&dateTo=${this.dateTo}`;
+      &dateFrom=${this.dateFrom}&dateTo=${this.dateTo}`;
       try {
         const response = await fetch(url, { method: 'POST'});
         console.log(response);
@@ -140,8 +132,7 @@ input{
 }
 
 .choice-form input,
-.choice-form button,
-.interval-input {
+.choice-form button{
   width: 100%;
   padding: 0.8rem 1rem;
   font-size: 1rem; 

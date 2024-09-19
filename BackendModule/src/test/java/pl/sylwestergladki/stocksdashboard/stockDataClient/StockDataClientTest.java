@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
-import pl.sylwestergladki.stocksdashboard.model.StockInterval;
 import pl.sylwestergladki.stocksdashboard.stockDataClient.dto.StockDto;
 import pl.sylwestergladki.stocksdashboard.stockDataClient.dto.TickerResponse;
 
@@ -28,7 +27,7 @@ class StockDataClientTest {
     @InjectMocks
     private StockDataClient stockDataClient;
 
-    @Value("${api.key}")
+    @Value("${API-KEY}")
     private String apiKey;
 
     @BeforeEach
@@ -39,21 +38,19 @@ class StockDataClientTest {
     @Test
     void StockDataClient_getStockData_returnsStockDto() {
         String symbol = "AAPL";
-        StockInterval interval = StockInterval.DAY;
         LocalDate dateFrom = LocalDate.of(2023, 1, 1);
         LocalDate dateTo = LocalDate.of(2023, 1, 31);
 
         StockDto mockResponse = StockDto.builder().build(); // Create a mock StockDto
         String expectedUrl = "https://api.polygon.io/v2/aggs/ticker/" +
-                symbol + "/range/1/" +
-                interval.getValue() + "/" +
+                symbol + "/range/1/day/" +
                 dateFrom + "/" +
                 dateTo + "/?adjusted=true&sort=asc&apiKey=" +
                 apiKey;
 
         when(restTemplate.getForObject(expectedUrl, StockDto.class)).thenReturn(mockResponse);
 
-        Optional<StockDto> result = stockDataClient.getStockData(symbol, interval, dateFrom, dateTo);
+        Optional<StockDto> result = stockDataClient.getStockData(symbol, dateFrom, dateTo);
 
         assertTrue(result.isPresent());
         assertEquals(mockResponse, result.get());

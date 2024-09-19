@@ -9,7 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import pl.sylwestergladki.stocksdashboard.model.StockDashboard;
-import pl.sylwestergladki.stocksdashboard.model.StockInterval;
 import pl.sylwestergladki.stocksdashboard.service.StockDashboardServiceImpl;
 
 import java.time.LocalDate;
@@ -29,39 +28,29 @@ class DashboardControllerTest {
     private DashboardController dashboardController;
 
     String symbol = "AAPL";
-    String interval = "DAY";
     String dateFrom = "2023-01-01";
     String dateTo = "2023-12-31";
 
     @Test
     void DashboardControllerTest_createDashboard_withCorrectParameters_returnsCreatedStatus() {
-        ResponseEntity<String> response = dashboardController.createDashboard(symbol, interval, dateFrom, dateTo);
+        ResponseEntity<String> response = dashboardController.createDashboard(symbol, dateFrom, dateTo);
 
         Assertions.assertThat(HttpStatus.CREATED).isEqualTo(response.getStatusCode());
         Assertions.assertThat("Dashboard created successfully").isEqualTo(response.getBody());
-        verify(stockdashboardService, times(1)).createStockDashboard(symbol, StockInterval.DAY,
+        verify(stockdashboardService, times(1)).createStockDashboard(symbol,
                 LocalDate.parse(dateFrom), LocalDate.parse(dateTo));
     }
 
-    @Test
-    void DashboardControllerTest_createDashboard_withInvalidInterval_returnsBadRequestStatus() {
-        interval = "INVALID";
-        ResponseEntity<String> response = dashboardController.createDashboard(symbol, interval, dateFrom, dateTo);
-
-        Assertions.assertThat(HttpStatus.BAD_REQUEST).isEqualTo(response.getStatusCode());
-        Assertions.assertThat("Invalid interval: " + interval).isEqualTo(response.getBody());
-        verify(stockdashboardService, never()).createStockDashboard(any(), any(), any(), any());
-    }
 
     @Test
     void DashboardControllerTest_createDashboard_withInvalidDate_returnsBadRequestStatus() {
         String dateFrom = "invalid-date";
 
-        ResponseEntity<String> response = dashboardController.createDashboard(symbol, interval, dateFrom, dateTo);
+        ResponseEntity<String> response = dashboardController.createDashboard(symbol, dateFrom, dateTo);
 
         Assertions.assertThat(HttpStatus.BAD_REQUEST).isEqualTo(response.getStatusCode());
         Assertions.assertThat("Invalid date format. Use 'yyyy-MM-dd'").isEqualTo(response.getBody());
-        verify(stockdashboardService, never()).createStockDashboard(any(), any(), any(), any());
+        verify(stockdashboardService, never()).createStockDashboard(any(), any(), any());
     }
 
     @Test
